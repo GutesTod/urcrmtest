@@ -6,6 +6,8 @@ from modules.common.services import BaseService
 
 from sqlmodel import SQLModel
     
+from dependency_injector.wiring import inject    
+    
 class ListMixin:
     @property
     @abstractmethod
@@ -20,6 +22,7 @@ class ListMixin:
     
     def setup_routes(self) -> None:
         @self._router.get("/", response_model=List[self.response_model])
+        @inject
         async def get_list():
             return await self.service.get_list()
         
@@ -36,6 +39,7 @@ class RetrieveMixin:
  
     def setup_routes(self) -> None:
         @self._router.get("/{id}", response_model=self.response_model)
+        @inject
         async def get_retrieve(id: int):
             return await self.service.get_one(id)
         
@@ -57,6 +61,7 @@ class CreateMixin:
     
     def setup_routes(self) -> None:
         @self._router.post("/", response_model=self.response_model)
+        @inject
         async def create(item: self.create_model):
             return await self.service.create(item)
         
@@ -78,6 +83,7 @@ class UpdateMixin:
     
     def setup_routes(self) -> None:
         @self._router.put("/", response_model=self.response_model)
+        @inject
         async def update(item: self.update_model, ):
             return await self.service.update(item)
         
@@ -99,6 +105,7 @@ class PartialUpdateMixin:
     
     def setup_routes(self) -> None:
         @self._router.patch("/", response_model=self.response_model)
+        @inject
         async def patch(item: self.partial_update_model):
             return await self.service.update(item, True)
         
@@ -110,6 +117,7 @@ class DeleteMixin:
     
     def setup_routes(self) -> None:
         @self._router.delete("/{id}")
+        @inject
         async def delete(id: int):
             return await self.service.delete(id)
         
